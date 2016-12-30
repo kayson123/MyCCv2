@@ -41,8 +41,9 @@ public class MainActivity extends AppCompatActivity {
     }
         //test github commit 
     private void setData(){
+        int i = 0;
         stringArrayList = new ArrayList<>();
-        stringArrayList.add("Chee Cheong Fun");
+        /*stringArrayList.add("Chee Cheong Fun");
         stringArrayList.add("Lo Mai Kai");
         stringArrayList.add("Ha Gao");
         stringArrayList.add("Siew Mai");
@@ -52,6 +53,11 @@ public class MainActivity extends AppCompatActivity {
         stringArrayList.add("Egg Tart");
         stringArrayList.add("Char Kuey Teow");
         stringArrayList.add("Pan Mee");
-        stringArrayList.add("Chu Yuk Fan");
+        stringArrayList.add("Chu Yuk Fan"); */
+
+        while(i<10){
+            stringArrayList.add(Integer.toString(i));
+            i++;
+        }
     }
 }
