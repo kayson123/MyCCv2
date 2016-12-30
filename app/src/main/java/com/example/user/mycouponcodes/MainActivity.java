@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         listView.setAdapter(adapter);
 
     }
-
+    //test github
     private void setData(){
         stringArrayList = new ArrayList<>();
         stringArrayList.add("Chee Cheong Fun");
