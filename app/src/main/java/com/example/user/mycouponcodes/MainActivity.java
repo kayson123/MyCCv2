@@ -34,34 +34,33 @@ import java.util.concurrent.RunnableFuture;
 
 public class MainActivity extends AppCompatActivity {
 
-    /*private ListView listView;
-    private ArrayList<String> stringArrayList;
-    private ArrayAdapter<String> adapter; */
-    private String TAG = MainActivity.class.getSimpleName();
+
+    /*private String TAG = MainActivity.class.getSimpleName();
     private ProgressDialog pDialog;
-    private ListView lv;
+    private ListView lv;*/
 
     //URL to get JSON details
-    private static String url = "http://192.168.0.6/mycc/retrieve_ws.php";
-    ArrayList<HashMap<String,String>> sales_details;
+    //private static String url = "http://192.168.0.6/mycc/retrieve_ws.php";
+    //ArrayList<HashMap<String,String>> sales_details;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState)  ;
         setContentView(R.layout.activity_main);
-        //listView = (ListView)findViewById(R.id.list_item);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        sales_details = new ArrayList<>();
-        lv = (ListView)findViewById(R.id.list_item);
-        new GetWarehouseSales().execute();
-        //setData();
-        //adapter = new ListViewAdapter(this, R.layout.item_listview, stringArrayList);
-       // listView.setAdapter(adapter);
+        //sales_details = new ArrayList<>();
+        //lv = (ListView)findViewById(R.id.list_item);
+        //GetWarehouseSales gws = new GetWarehouseSales(MainActivity.this);
+        //gws.executeGWS();
+        new RetrieveWarehouseSalesTask(this).execute();
+
+
     }
 
-    private class GetWarehouseSales extends AsyncTask<Void,Void,Void>{
+
+    /*private class GetWarehouseSales extends AsyncTask<Void,Void,Void>{
 
         @Override
         protected void onPreExecute(){
@@ -94,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
 
                         //adding each child node to HashMap key =>value
                         salesDetails.put("title",title);
-                        salesDetails.put("Description",description);
+                        salesDetails.put("description",description);
 
                         //adding to array list
                         sales_details.add(salesDetails);
@@ -134,22 +133,6 @@ public class MainActivity extends AppCompatActivity {
 
             lv.setAdapter(adapter);
         }
-    }
-    /*private void setData(){
-        int i = 0;
-        stringArrayList = new ArrayList<>();
-        stringArrayList.add("Chee Cheong Fun");
-        stringArrayList.add("Lo Mai Kai");
-        stringArrayList.add("Ha Gao");
-        stringArrayList.add("Siew Mai");
-        stringArrayList.add("Yao Char Kwai");
-        stringArrayList.add("Bak Gor Yi Mai");
-        stringArrayList.add("Red Bean");
-        stringArrayList.add("Egg Tart");
-        stringArrayList.add("Char Kuey Teow");
-        stringArrayList.add("Pan Mee");
-        stringArrayList.add("Chu Yuk Fan");
+    }*/
 
-
-    } */
 }
