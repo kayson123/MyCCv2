@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        toolbar.setTitle("Warehouse Sales");
         //sales_details = new ArrayList<>();
         //lv = (ListView)findViewById(R.id.list_item);
         //GetWarehouseSales gws = new GetWarehouseSales(MainActivity.this);
