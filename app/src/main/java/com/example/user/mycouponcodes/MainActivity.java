@@ -7,6 +7,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -34,14 +39,8 @@ import java.util.concurrent.RunnableFuture;
 
 public class MainActivity extends AppCompatActivity {
 
-
-    /*private String TAG = MainActivity.class.getSimpleName();
-    private ProgressDialog pDialog;
-    private ListView lv;*/
-
-    //URL to get JSON details
-    //private static String url = "http://192.168.0.6/mycc/retrieve_ws.php";
-    //ArrayList<HashMap<String,String>> sales_details;
+    private static ViewPager viewPager;
+    private static TabLayout tabLayout;
 
 
     @Override
@@ -50,90 +49,86 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setTitle("Warehouse Sales");
-        //sales_details = new ArrayList<>();
-        //lv = (ListView)findViewById(R.id.list_item);
-        //GetWarehouseSales gws = new GetWarehouseSales(MainActivity.this);
-        //gws.executeGWS();
-        new RetrieveWarehouseSalesTask(this).execute();
+        //toolbar.setTitle("Warehouse Sales");
+        viewPager = (ViewPager)findViewById(R.id.viewPager);
+        setupViewPager(viewPager);
+        tabLayout = (TabLayout)findViewById(R.id.tabLayout);
+        tabLayout.setupWithViewPager(viewPager); // setting tab over viewpager
+        //Implementing tab selected listener over tablayout
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener(){
+            @Override
+            public void onTabSelected(TabLayout.Tab tab){
+                viewPager.setCurrentItem(tab.getPosition());
+                switch (tab.getPosition()){
+                    case 0:
+                        Log.e("TAG","Tab 1");
+                        break;
+                    case 1:
+                        Log.e("TAG","Tab 2");
+                        break;
+                    case 2:
+                        Log.e("TAG", "Tab 3");
+                        break;
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+            }
+
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab){
+
+            }
+        });
+
+        //new RetrieveWarehouseSalesTask(this).execute();
 
 
     }
 
+    //Setting viewPager
+    private void setupViewPager(ViewPager viewPager){
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        //adapter.addFrag(new DummyFragment("ANDROID"), "ANDROID");
+        adapter.addFrag(new DummyFragment("Active"),"Active");
+        adapter.addFrag(new DummyFragment("Expired"),"Expired");
+        viewPager.setAdapter(adapter);
+    }
 
-    /*private class GetWarehouseSales extends AsyncTask<Void,Void,Void>{
+    //View Pager fragments setting adapter class
+    class ViewPagerAdapter extends FragmentPagerAdapter {
+        private final List<Fragment> mFragmentList = new ArrayList<>(); //fragment array list
+        private final List<String> mFragmentTitleList = new ArrayList<>();//title array list
 
-        @Override
-        protected void onPreExecute(){
-            super.onPreExecute();
-            pDialog = new ProgressDialog(MainActivity.this);
-            pDialog.setMessage("Getting you the best warehouse sales...");
-            pDialog.setCancelable(false);
-            pDialog.show();
+        public ViewPagerAdapter(FragmentManager manager){
+            super(manager);
         }
 
         @Override
-        protected Void doInBackground(Void... arg0){
-            HttpHandler sh = new HttpHandler();
-            //making a request to URL and getting response
-            String jsonStr = sh.makeServiceCall(url);
-            Log.e(TAG, "Response from url: " + jsonStr);
-
-            if(jsonStr != null){
-                try{
-                    JSONObject jsonObj = new JSONObject(jsonStr);
-                    //Getting JSON Array Node
-                    JSONArray sales = jsonObj.getJSONArray("Result");
-                    //looping through all results
-                    for(int i = 0; i<sales.length();i++){
-                        JSONObject s = sales.getJSONObject(i);
-                        String title = s.getString("title");
-                        String description = s.getString("description");
-
-                        HashMap<String,String> salesDetails = new HashMap<>();
-
-                        //adding each child node to HashMap key =>value
-                        salesDetails.put("title",title);
-                        salesDetails.put("description",description);
-
-                        //adding to array list
-                        sales_details.add(salesDetails);
-                    }
-                    Log.d("TAG",sales_details.toString());
-                }catch(final JSONException e){
-                    Log.e(TAG, "JSON parsing error: " + e.getMessage());
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getApplicationContext(),"JSON parsing error: " + e.getMessage(),Toast.LENGTH_LONG).show();
-                        }
-                    });
-                }
-            }else{
-                Log.e(TAG,"Couldn't get json from server");
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getApplicationContext(), "Check logcat", Toast.LENGTH_LONG ).show();
-                    }
-                });
-            }
-            return null;
+        public Fragment getItem(int position){
+            return mFragmentList.get(position);
         }
 
         @Override
-        protected void onPostExecute(Void result){
-            super.onPostExecute(result);
-            if(pDialog.isShowing()){
-                pDialog.dismiss();
-            }
-
-            //update parsed JSON data into ListView
-            ListAdapter adapter = new SimpleAdapter(MainActivity.this, sales_details,R.layout.item_listview, new String[]{
-                    "title","description"}, new int[]{R.id.text,R.id.description});
-
-            lv.setAdapter(adapter);
+        public int getCount(){
+            return mFragmentList.size();
         }
-    }*/
+
+        //adding fragments and title method
+        public void addFrag(Fragment fragment, String title){
+            mFragmentList.add(fragment);
+            mFragmentTitleList.add(title);
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position){
+            return mFragmentTitleList.get(position);
+        }
+    }
+
+
+
 
 }

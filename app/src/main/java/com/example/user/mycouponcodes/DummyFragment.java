@@ -1,17 +1,18 @@
 package com.example.user.mycouponcodes;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ListAdapter;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -23,21 +24,49 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Created by User on 1/1/2017.
+ * Created by User on 1/5/2017.
  */
 
+public class DummyFragment extends Fragment {
+    private View view;
+    private String title; //String for tab title
+    private static RecyclerView recyclerView;
+    public DummyFragment(){
 
+    }
 
+    public DummyFragment(String title) {
+        this.title = title;//Setting tab title
+    }
 
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+        view = inflater.inflate(R.layout.recycler_fragment, container, false);
+        new RetrieveWarehouseSalesTask(getActivity()).execute();
 
+        return view;
+    }
 
+    /*public void setRecyclerView(){
+        recyclerView = (RecyclerView)view.findViewById(R.id.recyclerView);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-public class RetrieveWarehouseSalesTask extends AsyncTask<Void,Void,Void>{
-        private String TAG = RetrieveWarehouseSalesTask.class.getSimpleName();
+        ArrayList<WarehouseSalesDetails> arrayList = new ArrayList<>();
+        for(int i = 0; i< 20; i++){
+            arrayList.add(title); //adding items to recycler view
+        }
+        AdapterRecycler adapter = new AdapterRecycler(getActivity(),arrayList);
+        recyclerView.setAdapter(adapter); // set adapter on recyclerview
+    }*/
+
+    class RetrieveWarehouseSalesTask extends AsyncTask<Void,Void,Void> {
+        private String TAG = com.example.user.mycouponcodes.RetrieveWarehouseSalesTask.class.getSimpleName();
         public ProgressDialog pDialog;
         private Context context;
         //URL to get JSON details
-        private static String url = "http://192.168.0.6/mycc/retrieve_ws.php";
+        private String url = "http://192.168.0.6/mycc/retrieve_ws.php";
         ArrayList<HashMap<String,String>> sales_details;
 
         //for recycler view
@@ -112,18 +141,19 @@ public class RetrieveWarehouseSalesTask extends AsyncTask<Void,Void,Void>{
             warehouse_recycler.setAdapter(mAdapter);
             warehouse_recycler.addOnItemTouchListener(
                     new RecyclerItemClickListener(context,warehouse_recycler,new RecyclerItemClickListener.OnItemClickListener() {
-                @Override
-                public void onItemClick(View view, int position) {
-                    Toast.makeText(context, "Successful click",
-                            Toast.LENGTH_SHORT).show();
-                }
+                        @Override
+                        public void onItemClick(View view, int position) {
+                            Toast.makeText(context, "Successful click",
+                                    Toast.LENGTH_SHORT).show();
+                        }
                         @Override
                         public void onLongItemClick(View view, int position){
                             //do whatever
                         }
-            }));
+                    }));
         }
+    }
+
+
+
 }
-
-
-
