@@ -1,41 +1,17 @@
 package com.example.user.mycouponcodes;
 
-import android.app.ProgressDialog;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.ListAdapter;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
-import android.widget.Toast;
-
-import com.amulyakhare.textdrawable.TextDrawable;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.RunnableFuture;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -91,9 +67,9 @@ public class MainActivity extends AppCompatActivity {
     //Setting viewPager
     private void setupViewPager(ViewPager viewPager){
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        //adapter.addFrag(new DummyFragment("ANDROID"), "ANDROID");
-        adapter.addFrag(new DummyFragment("Active"),"Active");
-        adapter.addFrag(new DummyFragment("Expired"),"Expired");
+        //adapter.addFrag(new ActiveWarehouseSalesFragment("ANDROID"), "ANDROID");
+        adapter.addFrag(new ActiveWarehouseSalesFragment("Active"),"Active");
+        adapter.addFrag(new ExpiredWarehouseSalesFragment("Expired"),"Expired");
         viewPager.setAdapter(adapter);
     }
 
