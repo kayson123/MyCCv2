@@ -49,6 +49,7 @@
         <!--android:layout_toRightOf="@id/promotion_image"
         android:layout_toLeftOf="@+id/title"/> -->
 
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
