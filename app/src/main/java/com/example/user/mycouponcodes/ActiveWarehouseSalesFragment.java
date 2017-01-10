@@ -2,6 +2,7 @@ package com.example.user.mycouponcodes;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,6 +14,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -51,26 +54,18 @@ public class ActiveWarehouseSalesFragment extends Fragment {
         return view;
     }
 
-    /*public void setRecyclerView(){
-        recyclerView = (RecyclerView)view.findViewById(R.id.recyclerView);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-        ArrayList<WarehouseSalesDetails> arrayList = new ArrayList<>();
-        for(int i = 0; i< 20; i++){
-            arrayList.add(title); //adding items to recycler view
-        }
-        AdapterRecycler adapter = new AdapterRecycler(getActivity(),arrayList);
-        recyclerView.setAdapter(adapter); // set adapter on recyclerview
-    }*/
-
     class RetrieveWarehouseSalesTask extends AsyncTask<Void,Void,Void> {
         private String TAG = RetrieveWarehouseSalesTask.class.getSimpleName();
+        private String TAG_PID = "pid";
         public ProgressDialog pDialog;
         private Context context;
         //URL to get JSON details
         private String url = "http://192.168.0.6/mycc/retrieve_ws.php";
         ArrayList<HashMap<String,String>> sales_details;
+        JSONObject jsonObj;
+        String jsonStr;
+        JSONArray sales;
+        int id;
 
         //for recycler view
         private RecyclerView warehouse_recycler;
@@ -98,14 +93,24 @@ public class ActiveWarehouseSalesFragment extends Fragment {
         protected Void doInBackground(Void... arg0){
             HttpHandler sh = new HttpHandler();
             //making a request to URL and getting response
-            String jsonStr = sh.makeServiceCall(url);
+            jsonStr = sh.makeServiceCall(url);
             Log.e(TAG, "Response from url: " + jsonStr);
 
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result){
+            super.onPostExecute(result);
+            if(pDialog.isShowing()){
+                pDialog.dismiss();
+            }
             if(jsonStr != null){
                 try{
-                    JSONObject jsonObj = new JSONObject(jsonStr);
+                    jsonObj = new JSONObject(jsonStr);
                     //Getting JSON Array Node
-                    JSONArray sales = jsonObj.getJSONArray("Result");
+                    sales = jsonObj.getJSONArray("Result");
                     //looping through all results
                     for(int i = 0; i<sales.length();i++){
                         JSONObject s = sales.getJSONObject(i);
@@ -114,6 +119,7 @@ public class ActiveWarehouseSalesFragment extends Fragment {
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                         Date actual_date = sdf.parse(wsd.expiry_date);
                         if(new Date().before(actual_date)){
+                            wsd.id = s.getString("id");
                             wsd.company_name = s.getString("company_name");
                             wsd.promotion_image= s.getString("promotion_image");
                             wsd.title = s.getString("title");
@@ -130,18 +136,6 @@ public class ActiveWarehouseSalesFragment extends Fragment {
             }else{
                 Log.e(TAG,"Couldn't get json from server");
             }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result){
-            super.onPostExecute(result);
-            if(pDialog.isShowing()){
-                pDialog.dismiss();
-            }
-
-
-
             //update RecyclerView
             warehouse_recycler = (RecyclerView)((AppCompatActivity) context).findViewById(R.id.recyclerView);
             mAdapter = new AdapterRecycler(context, data);
@@ -153,8 +147,13 @@ public class ActiveWarehouseSalesFragment extends Fragment {
                     new RecyclerItemClickListener(context,warehouse_recycler,new RecyclerItemClickListener.OnItemClickListener() {
                         @Override
                         public void onItemClick(View view, int position) {
-                            Toast.makeText(context, "Successful click",
+                            WarehouseSalesDetails wsd = data.get(position);
+                            Toast.makeText(context,"ID is " + wsd.id,
                                     Toast.LENGTH_SHORT).show();
+                            String pid = wsd.id;
+                            Intent in = new Intent(context,RetrieveIndividualWarehouseSales.class);
+                            in.putExtra("pid",pid);
+                            startActivity(in);
                         }
                         @Override
                         public void onLongItemClick(View view, int position){

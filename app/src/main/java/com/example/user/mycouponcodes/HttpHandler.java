@@ -4,11 +4,16 @@ import android.net.wifi.WifiConfiguration;
 import android.renderscript.ScriptGroup;
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -45,6 +50,41 @@ public class HttpHandler {
         }
 
         return response;
+    }
+
+    //to send to web server
+    public String makeHttpRequest(String url,String id){
+
+        HttpURLConnection httpURLConnection = null;
+        StringBuffer response = null;
+
+        try{
+
+                URL urlPost = new URL(url);
+                httpURLConnection = (HttpURLConnection) urlPost.openConnection();
+                //set request properties
+                httpURLConnection.setDoOutput(true); //defaults request method to POST
+                httpURLConnection.setDoInput(true);  //allow input to this HttpURLConnection
+                httpURLConnection.setRequestMethod("POST");
+                DataOutputStream wr = new DataOutputStream(httpURLConnection.getOutputStream());
+                wr.writeBytes("id="+id);
+                wr.flush(); //flush the stream when we're finished writing to make sure all bytes get to their destination
+                wr.close();
+                InputStream is = httpURLConnection.getInputStream();
+                BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+                String line;
+                response = new StringBuffer();
+                while((line = rd.readLine()) != null) {
+                    response.append(line);
+                    response.append('\r');
+                }
+                rd.close();
+        } catch (MalformedURLException e) {
+            Log.e(TAG,"MalformedURLException: " + e.getMessage());
+        } catch (IOException e) {
+            Log.e(TAG, "IOException: " + e.getMessage());
+        }
+        return response.toString();
     }
 
     private String convertStreamToString(InputStream is){

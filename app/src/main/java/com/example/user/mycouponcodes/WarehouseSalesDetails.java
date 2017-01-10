@@ -7,11 +7,13 @@ import java.util.Date;
  */
 
 public class WarehouseSalesDetails {
-
+    public String id;
     public String company_name;
     public String promotion_image;
     public String title;
     public String promotional_period;
     public String expiry_date;
+    public String sales_description;
+    public String sales_location;
 
 }

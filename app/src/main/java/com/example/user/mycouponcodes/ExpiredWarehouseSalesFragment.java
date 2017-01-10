@@ -102,6 +102,7 @@ public class ExpiredWarehouseSalesFragment extends Fragment {
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                         Date actual_date = sdf.parse(wsd.expiry_date);
                         if(new Date().after(actual_date)){
+                            wsd.id = s.getString("id");
                             wsd.company_name = s.getString("company_name");
                             wsd.promotion_image= s.getString("promotion_image");
                             wsd.title = s.getString("title");
@@ -142,7 +143,8 @@ public class ExpiredWarehouseSalesFragment extends Fragment {
                     new RecyclerItemClickListener(context,warehouse_recycler,new RecyclerItemClickListener.OnItemClickListener() {
                         @Override
                         public void onItemClick(View view, int position) {
-                            Toast.makeText(context, "Successful click",
+                            WarehouseSalesDetails wsd = data.get(position);
+                            Toast.makeText(context, "ID is" + wsd.id,
                                     Toast.LENGTH_SHORT).show();
                         }
                         @Override
