@@ -110,12 +110,14 @@ public class RetrieveIndividualWarehouseSales extends Activity {
             TextView company_name = (TextView)findViewById(R.id.company_name);
             TextView title = (TextView)findViewById(R.id.title);
             TextView promotional_period = (TextView)findViewById(R.id.promotional_period);
+            //promotional_period.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_alarm_black_18dp, 0, 0, 0);
             TextView sales_location = (TextView)findViewById(R.id.sales_location);
             TextView sales_description = (TextView)findViewById(R.id.sales_description);
             company_name.setText(wsd.company_name);
             title.setText(wsd.title);
             sales_description.setText(wsd.sales_description);
-            promotional_period.setText(wsd.promotional_period);
+            String valid_from = "Valid From: \n";
+            promotional_period.setText(valid_from + wsd.promotional_period);
             sales_location.setText(wsd.sales_location);
             //load image into imageview using glide
             Glide.with(RetrieveIndividualWarehouseSales.this).load(imageURL)
