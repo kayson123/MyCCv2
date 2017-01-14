@@ -10,6 +10,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
+import com.google.android.gms.maps.GoogleMap;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static ViewPager viewPager;
     private static TabLayout tabLayout;
+
 
 
     @Override
@@ -59,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //new RetrieveWarehouseSalesTask(this).execute();
 
 
     }

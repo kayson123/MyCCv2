@@ -3,6 +3,8 @@
     package="com.example.user.mycouponcodes">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="com.example.user.mycouponcodes.MAPS_RECEIVE"/>
+
 
     <application
         android:allowBackup="true"
@@ -21,6 +23,13 @@
             </intent-filter>
         </activity>
         <activity android:label="@string/app_name" android:name=".RetrieveIndividualWarehouseSales"/>
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyC314rWCDOmgxIOFfRBOt28CL8QuEJH6Vk"/>
     </application>
 
 </manifest>
