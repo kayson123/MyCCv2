@@ -108,7 +108,7 @@ public class RetrieveIndividualWarehouseSales extends AppCompatActivity implemen
         }
 
         //System.out.println("latitude from onMapReady: " + latitude);
-        //from michael wongggggggggggggggggggggg1234
+        //from michael wongggggggggg
     }
 
 
