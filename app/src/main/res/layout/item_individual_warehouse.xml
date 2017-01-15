@@ -21,7 +21,8 @@
         android:layout_height="200dp"
         android:background="#ffffff"
         android:id="@+id/promotion_image"
-        android:scaleType="fitXY"/>
+        android:scaleType="fitXY"
+        android:layout_below="@id/my_toolbar"/>
     <View
         android:id="@+id/grayline"
         android:layout_width="match_parent"

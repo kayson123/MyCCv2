@@ -107,15 +107,13 @@ public class RetrieveIndividualWarehouseSales extends AppCompatActivity implemen
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location,15));
         }
 
-        //System.out.println("latitude from onMapReady: " + latitude);
-        //from michael wonggggggggggforkthis
     }
 
 
 
 
     class RetrieveItem extends AsyncTask<Void,Void,Void>{
-        private ProgressDialog pDialog;//o0o
+        private ProgressDialog pDialog;
         private String url = "http://hermosa.com.my/khlim/retrieve_individual_warehouse_sales.php";
         private String TAG = RetrieveIndividualWarehouseSales.RetrieveItem.class.getSimpleName();
         List<WarehouseSalesDetails> data = new ArrayList<>();
