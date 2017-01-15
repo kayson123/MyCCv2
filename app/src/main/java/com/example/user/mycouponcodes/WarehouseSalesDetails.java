@@ -15,5 +15,7 @@ public class WarehouseSalesDetails {
     public String expiry_date;
     public String sales_description;
     public String sales_location;
+    public Float latitude;
+    public Float longitude;
 
 }

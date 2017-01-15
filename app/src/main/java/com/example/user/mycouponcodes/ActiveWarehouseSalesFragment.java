@@ -60,7 +60,7 @@ public class ActiveWarehouseSalesFragment extends Fragment {
         public ProgressDialog pDialog;
         private Context context;
         //URL to get JSON details
-        private String url = "http://192.168.0.6/mycc/retrieve_ws.php";
+        private String url = "http://192.168.0.104/mycc/retrieve_ws.php";
         ArrayList<HashMap<String,String>> sales_details;
         JSONObject jsonObj;
         String jsonStr;
@@ -148,8 +148,8 @@ public class ActiveWarehouseSalesFragment extends Fragment {
                         @Override
                         public void onItemClick(View view, int position) {
                             WarehouseSalesDetails wsd = data.get(position);
-                            Toast.makeText(context,"ID is " + wsd.id,
-                                    Toast.LENGTH_SHORT).show();
+                           // Toast.makeText(context,"ID is " + wsd.id,
+                                    //Toast.LENGTH_SHORT).show();
                             String pid = wsd.id;
                             Intent in = new Intent(context,RetrieveIndividualWarehouseSales.class);
                             in.putExtra("pid",pid);

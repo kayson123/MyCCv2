@@ -2,6 +2,7 @@ package com.example.user.mycouponcodes;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -57,7 +58,7 @@ public class ExpiredWarehouseSalesFragment extends Fragment {
         public ProgressDialog pDialog;
         private Context context;
         //URL to get JSON details
-        private String url = "http://192.168.0.6/mycc/retrieve_ws.php";
+        private String url = "http://192.168.0.104/mycc/retrieve_ws.php";
         ArrayList<HashMap<String,String>> sales_details;
 
         //for recycler view
@@ -144,8 +145,10 @@ public class ExpiredWarehouseSalesFragment extends Fragment {
                         @Override
                         public void onItemClick(View view, int position) {
                             WarehouseSalesDetails wsd = data.get(position);
-                            Toast.makeText(context, "ID is" + wsd.id,
-                                    Toast.LENGTH_SHORT).show();
+                            String pid = wsd.id;
+                            Intent in = new Intent(context,RetrieveIndividualWarehouseSales.class);
+                            in.putExtra("pid",pid);
+                            startActivity(in);
                         }
                         @Override
                         public void onLongItemClick(View view, int position){

@@ -11,11 +11,16 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.ShareActionProvider;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -36,6 +41,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -48,8 +54,14 @@ import java.util.List;
  * Created by User on 1/9/2017.
  */
 
-public class RetrieveIndividualWarehouseSales extends FragmentActivity implements OnMapReadyCallback {
+public class RetrieveIndividualWarehouseSales extends AppCompatActivity implements OnMapReadyCallback {
     private GoogleMap googleMap;
+    String title_maps;
+    Float latitude;
+    Float longitude;
+    SupportMapFragment fm;
+    private ShareActionProvider mShareActionProvider;
+    Toolbar myToolbar;
 
 
     /*public void onCreate(Bundle savedInstanceState){
@@ -61,16 +73,41 @@ public class RetrieveIndividualWarehouseSales extends FragmentActivity implement
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.item_individual_warehouse);
-        SupportMapFragment fm =(SupportMapFragment)this.getSupportFragmentManager().findFragmentById(R.id.map);
-        fm.getMapAsync(RetrieveIndividualWarehouseSales.this);
+        //lets set the toolbar
         new RetrieveItem().execute();
+        myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+
+        fm =(SupportMapFragment)this.getSupportFragmentManager().findFragmentById(R.id.map);
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        MenuItem item = menu.findItem(R.id.menu_item_share);
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+        //create the sharing intent
+        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+        sharingIntent.setType("text/plain");
+        String shareBody = title_maps + ". Download now at Google Play Store to stay up to date with the latest sales!";
+        sharingIntent.putExtra(Intent.EXTRA_SUBJECT, "Share Subject");
+        sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
+        //set the sharing intent
+        mShareActionProvider.setShareIntent(sharingIntent);
+        return true;
     }
     @Override
     public void onMapReady(GoogleMap gm) {
         googleMap = gm;
-        LatLng sydney = new LatLng(-34, 151);
-        googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        if(latitude == null || longitude == null){
+            getSupportFragmentManager().beginTransaction().hide(fm).commit();
+        }else{
+            LatLng location = new LatLng(latitude, longitude);
+            googleMap.addMarker(new MarkerOptions().position(location).title(title_maps)).showInfoWindow();
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location,15));
+        }
+
+        //System.out.println("latitude from onMapReady: " + latitude);
 
     }
 
@@ -79,7 +116,7 @@ public class RetrieveIndividualWarehouseSales extends FragmentActivity implement
 
     class RetrieveItem extends AsyncTask<Void,Void,Void>{
         private ProgressDialog pDialog;
-        private String url = "http://192.168.0.6/mycc/retrieve_individual_warehouse_sales.php";
+        private String url = "http://192.168.0.104/mycc/retrieve_individual_warehouse_sales.php";
         private String TAG = RetrieveIndividualWarehouseSales.RetrieveItem.class.getSimpleName();
         List<WarehouseSalesDetails> data = new ArrayList<>();
         ArrayList<HashMap<String,String>> sales_details;
@@ -119,6 +156,13 @@ public class RetrieveIndividualWarehouseSales extends FragmentActivity implement
                         wsd.promotional_period = s.getString("promotional_period");
                         wsd.sales_description = s.getString("sales_description");
                         wsd.sales_location = s.getString("sales_location");
+                        if(s.getDouble("latitude") == 0 || s.getDouble("longitude") == 0){
+                            wsd.latitude = null;
+                            wsd.longitude = null;
+                        }else{
+                            wsd.latitude = BigDecimal.valueOf(s.getDouble("latitude")).floatValue();
+                            wsd.longitude = BigDecimal.valueOf(s.getDouble("longitude")).floatValue();
+                        }
                         data.add(wsd);
 
                     }
@@ -158,7 +202,14 @@ public class RetrieveIndividualWarehouseSales extends FragmentActivity implement
                     .placeholder(R.drawable.error)
                     .error(R.drawable.error)
                     .into(promotional_image);
-            //MapFragment.newInstance();
+            //google maps
+            latitude = wsd.latitude;
+            longitude = wsd.longitude;
+            title_maps = wsd.title;
+            fm.getMapAsync(RetrieveIndividualWarehouseSales.this);
+            setSupportActionBar(myToolbar);
+
+
 
 
         }
