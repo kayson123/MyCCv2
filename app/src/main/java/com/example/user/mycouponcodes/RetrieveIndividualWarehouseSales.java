@@ -108,15 +108,15 @@ public class RetrieveIndividualWarehouseSales extends AppCompatActivity implemen
         }
 
         //System.out.println("latitude from onMapReady: " + latitude);
-
+        //from mike
     }
 
 
 
 
     class RetrieveItem extends AsyncTask<Void,Void,Void>{
-        private ProgressDialog pDialog;
-        private String url = "http://192.168.0.104/mycc/retrieve_individual_warehouse_sales.php";
+        private ProgressDialog pDialog;//o0o
+        private String url = "http://hermosa.com.my/khlim/retrieve_individual_warehouse_sales.php";
         private String TAG = RetrieveIndividualWarehouseSales.RetrieveItem.class.getSimpleName();
         List<WarehouseSalesDetails> data = new ArrayList<>();
         ArrayList<HashMap<String,String>> sales_details;

@@ -58,7 +58,7 @@ public class ExpiredWarehouseSalesFragment extends Fragment {
         public ProgressDialog pDialog;
         private Context context;
         //URL to get JSON details
-        private String url = "http://192.168.0.104/mycc/retrieve_ws.php";
+        private String url = "http://hermosa.com.my/khlim/retrieve_ws.php";
         ArrayList<HashMap<String,String>> sales_details;
 
         //for recycler view
