@@ -40,7 +40,8 @@
         android:textSize="20sp"
         android:textColor="#000000"
         android:padding="10dp"
-        android:background="#ffffff"/>
+        android:background="#ffffff"
+        android:textStyle="bold"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -49,20 +50,20 @@
         android:id="@+id/title"
         android:layout_below="@id/company_name"
         android:typeface="monospace"
-        android:textSize="15sp"
+        android:textSize="20sp"
         android:textColor="#000000"
-
         android:padding="10dp"
-        android:background="@drawable/rounded_corner"/>
-    <TextView
+        android:background="@drawable/rounded_corner"
+        android:layout_marginTop="-10dp"/>
+    <com.example.user.mycouponcodes.ExpandableTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="Description"
         android:id="@+id/sales_description"
         android:layout_below="@id/title"
-        android:textSize="10sp"
-        android:textColor="#000000"
+        android:textSize="15sp"
+        android:textColor="#696969"
         android:padding="10dp"
         android:background="#ffffff"/>
     <View
