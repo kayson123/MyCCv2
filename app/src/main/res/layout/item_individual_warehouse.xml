@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
+<com.flipboard.bottomsheet.BottomSheetLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/bottomsheet"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true">
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="575dp">
     <android.support.v7.widget.Toolbar
         android:id="@+id/my_toolbar"
         android:layout_width="match_parent"
@@ -136,9 +142,14 @@
             android:layout_height="200dp"
             tools:context="com.example.user.mycouponcodes.RetrieveIndividualWarehouseSales"
             map:cameraZoom="10"/>
+
+
         </FrameLayout>
+
+
 
 
 
 </RelativeLayout>
     </ScrollView>
+</com.flipboard.bottomsheet.BottomSheetLayout>

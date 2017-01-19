@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -26,8 +27,11 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.flipboard.bottomsheet.BottomSheetLayout;
+import com.flipboard.bottomsheet.commons.IntentPickerSheetView;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -57,10 +61,13 @@ import java.util.List;
 public class RetrieveIndividualWarehouseSales extends AppCompatActivity implements OnMapReadyCallback {
     private GoogleMap googleMap;
     String title_maps;
+    String promotion_period;
+    String salesLocation;
     Float latitude;
     Float longitude;
     SupportMapFragment fm;
     private ShareActionProvider mShareActionProvider;
+    protected BottomSheetLayout bottomSheetLayout;
     Toolbar myToolbar;
 
 
@@ -84,18 +91,34 @@ public class RetrieveIndividualWarehouseSales extends AppCompatActivity implemen
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        MenuItem item = menu.findItem(R.id.menu_item_share);
-        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
-        //create the sharing intent
-        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-        sharingIntent.setType("text/plain");
-        String shareBody = title_maps + ". Download now at Google Play Store to stay up to date with the latest sales!";
-        sharingIntent.putExtra(Intent.EXTRA_SUBJECT, "Share Subject");
-        sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
-        //set the sharing intent
-        mShareActionProvider.setShareIntent(sharingIntent);
         return true;
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_item_share:
+                //Toast.makeText(this, "Menu Item 1 selected", Toast.LENGTH_SHORT).show();
+                bottomSheetLayout = (BottomSheetLayout) findViewById(R.id.bottomsheet);
+                final Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.setType("text/plain");
+                String shareBody = title_maps + " from " + promotion_period + " @" + salesLocation
+                                + ". Download now at Google Play Store to stay up to date with the latest sales!";
+                shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Share Subject");
+                shareIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
+                IntentPickerSheetView intentPickerSheet = new IntentPickerSheetView(RetrieveIndividualWarehouseSales.this,shareIntent,"Share via",  new IntentPickerSheetView.OnIntentPickedListener(){
+                    @Override
+                    public void onIntentPicked(IntentPickerSheetView.ActivityInfo activityInfo){
+                        bottomSheetLayout.dismissSheet();
+                        startActivity(activityInfo.getConcreteIntent(shareIntent));
+                    }
+                });
+                bottomSheetLayout.showWithSheetView(intentPickerSheet);
+                break;
+        }
+        return true;
+    }
+
     @Override
     public void onMapReady(GoogleMap gm) {
         googleMap = gm;
@@ -204,6 +227,8 @@ public class RetrieveIndividualWarehouseSales extends AppCompatActivity implemen
             latitude = wsd.latitude;
             longitude = wsd.longitude;
             title_maps = wsd.title;
+            promotion_period = wsd.promotional_period;
+            salesLocation = wsd.sales_location;
             fm.getMapAsync(RetrieveIndividualWarehouseSales.this);
             setSupportActionBar(myToolbar);
 

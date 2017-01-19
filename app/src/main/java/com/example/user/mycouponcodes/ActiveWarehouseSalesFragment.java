@@ -65,7 +65,6 @@ public class ActiveWarehouseSalesFragment extends Fragment {
         JSONObject jsonObj;
         String jsonStr;
         JSONArray sales;
-        int id;
 
         //for recycler view
         private RecyclerView warehouse_recycler;
