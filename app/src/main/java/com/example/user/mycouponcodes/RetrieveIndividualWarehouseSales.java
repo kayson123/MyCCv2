@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.Image;
 import android.os.AsyncTask;
@@ -12,20 +13,27 @@ import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.Pair;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,7 +53,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -69,6 +79,8 @@ public class RetrieveIndividualWarehouseSales extends AppCompatActivity implemen
     private ShareActionProvider mShareActionProvider;
     protected BottomSheetLayout bottomSheetLayout;
     Toolbar myToolbar;
+    String userNameText;
+    String userEmailText;
 
 
     /*public void onCreate(Bundle savedInstanceState){
@@ -83,8 +95,46 @@ public class RetrieveIndividualWarehouseSales extends AppCompatActivity implemen
         //lets set the toolbar
         new RetrieveItem().execute();
         myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-
         fm =(SupportMapFragment)this.getSupportFragmentManager().findFragmentById(R.id.map);
+        Button postComment = (Button)findViewById(R.id.postCommentButton);
+        postComment.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View view){
+                AlertDialog.Builder alert = new AlertDialog.Builder(RetrieveIndividualWarehouseSales.this,R.style.AlertDialogTheme);
+                LinearLayout layout = new LinearLayout(RetrieveIndividualWarehouseSales.this);
+                layout.setOrientation(LinearLayout.VERTICAL);
+                final EditText userName = new EditText(RetrieveIndividualWarehouseSales.this);
+                userName.setHint("Enter your username");
+                userName.setTextColor(ContextCompat.getColor(RetrieveIndividualWarehouseSales.this,R.color.textColorPrimary));
+                layout.addView(userName);
+                final EditText userEmail = new EditText(RetrieveIndividualWarehouseSales.this);
+                userEmail.setHint("Enter your email");
+                userEmail.setTextColor(ContextCompat.getColor(RetrieveIndividualWarehouseSales.this,R.color.textColorPrimary));
+                layout.addView(userEmail);
+                alert.setTitle("User Registration");
+                alert.setView(layout);
+                alert.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        userNameText = userName.getText().toString();
+                        userEmailText = userEmail.getText().toString();
+                        //whatever you want to do with the text
+                        if(Patterns.EMAIL_ADDRESS.matcher(userEmail.getText()).matches()){
+                            //Toast.makeText(getApplicationContext(), "Valid Email",Toast.LENGTH_LONG).show();
+                            new CreateUserAccount().execute();
+                        }else{
+                            Toast.makeText(getApplicationContext(),"Invalid Email",Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+                alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //whatever you want to do with the no button
+                    }
+                });
+                alert.show();
+            }
+        });
 
     }
 
@@ -231,10 +281,60 @@ public class RetrieveIndividualWarehouseSales extends AppCompatActivity implemen
             salesLocation = wsd.sales_location;
             fm.getMapAsync(RetrieveIndividualWarehouseSales.this);
             setSupportActionBar(myToolbar);
+        }
+    }
+    //to create user
+    class CreateUserAccount extends AsyncTask<Void,Void,Void>{
+        private ProgressDialog pDialog;
+        private String url = "http://192.168.0.17/mycc/create_user.php";
+        private String TAG = RetrieveIndividualWarehouseSales.RetrieveItem.class.getSimpleName();
+        String jsonStrUserCreation;
+        String userMessage = "empty";
 
-
-
+        @Override
+        protected void onPreExecute(){
+            super.onPreExecute();
+            pDialog = new ProgressDialog(RetrieveIndividualWarehouseSales.this);
+            pDialog.setMessage("Creating account...");
+            pDialog.setCancelable(false);
+            pDialog.show();
 
         }
+
+        @Override
+        protected Void doInBackground(Void... arg0){
+            HttpHandler sh = new HttpHandler();
+                String urlParameters = "user_name="+userNameText+"&user_email="+userEmailText;
+                System.out.println("userNameText: " + userNameText);
+                System.out.println("userEmailText: " + userEmailText);
+                jsonStrUserCreation = sh.createUser(url,urlParameters);
+
+            Log.e(TAG, "Response from userCreationURL: " + jsonStrUserCreation);
+
+            try{
+                JSONObject jsonObj = new JSONObject(jsonStrUserCreation);
+                JSONArray userDetails = jsonObj.getJSONArray("Result");
+                for(int i = 0; i<userDetails.length();i++){
+                    JSONObject s = userDetails.getJSONObject(i);
+                    UserDetails ud = new UserDetails();
+                    ud.successID = s.getString("success");
+                    ud.successMessage = s.getString("message");
+                    userMessage = ud.successMessage;
+                    //Toast.makeText(RetrieveIndividualWarehouseSales.this, ud.successMessage, Toast.LENGTH_LONG).show();
+
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            Toast.makeText(RetrieveIndividualWarehouseSales.this, userMessage, Toast.LENGTH_LONG).show();
+            if(pDialog.isShowing()){
+                pDialog.dismiss();
+            }
+        }
+
     }
 }

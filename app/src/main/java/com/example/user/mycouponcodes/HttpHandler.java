@@ -3,6 +3,7 @@ package com.example.user.mycouponcodes;
 import android.net.wifi.WifiConfiguration;
 import android.renderscript.ScriptGroup;
 import android.util.Log;
+import android.util.Pair;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,6 +19,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.util.List;
 
 /**
  * Created by User on 12/30/2016.
@@ -85,6 +88,46 @@ public class HttpHandler {
             Log.e(TAG, "IOException: " + e.getMessage());
         }
         return response.toString();
+    }
+
+        //to create user from DialogBox
+    public String createUser(String url,String urlParameters){
+        //Making Http request
+        HttpURLConnection httpURLConnection = null;
+        StringBuffer response = null;
+        String lineEnd = "\r\n";
+
+        try{
+                URL urlPost = new URL(url);
+                httpURLConnection = (HttpURLConnection) urlPost.openConnection();
+                httpURLConnection.setDoOutput(true); //defaults request method to POST
+                httpURLConnection.setDoInput(true);  //allow input to this HttpURLConnection
+                httpURLConnection.setUseCaches(false);
+                httpURLConnection.setRequestMethod("POST");
+                httpURLConnection.connect();
+                DataOutputStream wr = new DataOutputStream(httpURLConnection.getOutputStream());
+                wr.writeBytes(urlParameters);
+                wr.flush(); //flush the stream when we're finished writing to make sure all bytes get to their destination
+                wr.close();
+                InputStream is = httpURLConnection.getInputStream();
+                BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+                String line;
+                response = new StringBuffer();
+                while((line = rd.readLine()) != null) {
+                    response.append(line);
+                    response.append('\r');
+                }
+
+
+        } catch (ProtocolException e) {
+            e.printStackTrace();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return response.toString();
+
     }
 
     private String convertStreamToString(InputStream is){

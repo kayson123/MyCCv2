@@ -142,9 +142,22 @@
             android:layout_height="200dp"
             tools:context="com.example.user.mycouponcodes.RetrieveIndividualWarehouseSales"
             map:cameraZoom="10"/>
-
-
         </FrameLayout>
+
+    <EditText
+        android:id="@+id/postComment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/map_framecontainer"
+        android:hint="Write a comment.."/>
+    <Button
+        android:id="@+id/postCommentButton"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/postComment"
+        android:text="Post"
+        android:background="@color/colorPrimaryDark"
+        android:textColor="@color/textColorPrimary"/>
 
 
 
