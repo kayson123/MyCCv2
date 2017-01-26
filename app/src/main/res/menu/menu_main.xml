@@ -12,7 +12,7 @@
         android:id="@+id/menu_item_share"
         app:showAsAction="always"
         android:title="Share"
-         />
+        android:icon="@drawable/share_button"/>
     <!--app:actionProviderClass=
             "android.support.v7.widget.ShareActionProvider"-->
 </menu>

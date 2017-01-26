@@ -91,7 +91,7 @@ public class HttpHandler {
     }
 
         //to create user from DialogBox
-    public String createUser(String url,String urlParameters){
+    public String postComment(String url,String urlParameters){
         //Making Http request
         HttpURLConnection httpURLConnection = null;
         StringBuffer response = null;

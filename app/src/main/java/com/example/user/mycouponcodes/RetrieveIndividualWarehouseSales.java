@@ -1,37 +1,22 @@
 package com.example.user.mycouponcodes;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.util.Pair;
 import android.util.Patterns;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -40,7 +25,6 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.flipboard.bottomsheet.BottomSheetLayout;
 import com.flipboard.bottomsheet.commons.IntentPickerSheetView;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -51,15 +35,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.net.URLEncoder;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -81,6 +59,8 @@ public class RetrieveIndividualWarehouseSales extends AppCompatActivity implemen
     Toolbar myToolbar;
     String userNameText;
     String userEmailText;
+    String userCommentText;
+    String sales_id;
 
 
     /*public void onCreate(Bundle savedInstanceState){
@@ -105,22 +85,31 @@ public class RetrieveIndividualWarehouseSales extends AppCompatActivity implemen
                 final EditText userName = new EditText(RetrieveIndividualWarehouseSales.this);
                 userName.setHint("Enter your username");
                 userName.setTextColor(ContextCompat.getColor(RetrieveIndividualWarehouseSales.this,R.color.textColorPrimary));
+                userName.setSingleLine(true);
+                userName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.account_settings_colour, 0, 0, 0);
                 layout.addView(userName);
                 final EditText userEmail = new EditText(RetrieveIndividualWarehouseSales.this);
                 userEmail.setHint("Enter your email");
                 userEmail.setTextColor(ContextCompat.getColor(RetrieveIndividualWarehouseSales.this,R.color.textColorPrimary));
+                userEmail.setSingleLine(true);
+                userEmail.setCompoundDrawablesWithIntrinsicBounds(R.drawable.email_outline_colour, 0, 0, 0);
                 layout.addView(userEmail);
-                alert.setTitle("User Registration");
+                final EditText userComment = new EditText(RetrieveIndividualWarehouseSales.this);
+                userComment.setTextColor(ContextCompat.getColor(RetrieveIndividualWarehouseSales.this,R.color.textColorPrimary));
+                userComment.setHint("Write a comment...");
+                layout.addView(userComment);
+                alert.setTitle("Write a comment");
                 alert.setView(layout);
                 alert.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         userNameText = userName.getText().toString();
                         userEmailText = userEmail.getText().toString();
+                        userCommentText = userComment.getText().toString();
                         //whatever you want to do with the text
                         if(Patterns.EMAIL_ADDRESS.matcher(userEmail.getText()).matches()){
                             //Toast.makeText(getApplicationContext(), "Valid Email",Toast.LENGTH_LONG).show();
-                            new CreateUserAccount().execute();
+                            new PostComments().execute();
                         }else{
                             Toast.makeText(getApplicationContext(),"Invalid Email",Toast.LENGTH_LONG).show();
                         }
@@ -221,6 +210,7 @@ public class RetrieveIndividualWarehouseSales extends AppCompatActivity implemen
                     for(int i = 0; i<sales.length();i++){
                         JSONObject s = sales.getJSONObject(i);
                         WarehouseSalesDetails wsd = new WarehouseSalesDetails();
+                        wsd.id = s.getString("id");
                         wsd.company_name = s.getString("company_name");
                         wsd.promotion_image= s.getString("promotion_image");
                         wsd.title = s.getString("title");
@@ -255,6 +245,7 @@ public class RetrieveIndividualWarehouseSales extends AppCompatActivity implemen
             }
             WarehouseSalesDetails wsd = data.get(0);
             String imageURL = wsd.promotion_image;
+            sales_id = wsd.id;
             ImageView promotional_image = (ImageView) findViewById(R.id.promotion_image);
             TextView company_name = (TextView)findViewById(R.id.company_name);
             TextView title = (TextView)findViewById(R.id.title);
@@ -284,9 +275,9 @@ public class RetrieveIndividualWarehouseSales extends AppCompatActivity implemen
         }
     }
     //to create user
-    class CreateUserAccount extends AsyncTask<Void,Void,Void>{
+    class PostComments extends AsyncTask<Void,Void,Void>{
         private ProgressDialog pDialog;
-        private String url = "http://192.168.0.17/mycc/create_user.php";
+        private String url = "http://hermosa.com.my/khlim/post_comment.php";
         private String TAG = RetrieveIndividualWarehouseSales.RetrieveItem.class.getSimpleName();
         String jsonStrUserCreation;
         String userMessage = "empty";
@@ -295,7 +286,7 @@ public class RetrieveIndividualWarehouseSales extends AppCompatActivity implemen
         protected void onPreExecute(){
             super.onPreExecute();
             pDialog = new ProgressDialog(RetrieveIndividualWarehouseSales.this);
-            pDialog.setMessage("Creating account...");
+            pDialog.setMessage("Posting comment...");
             pDialog.setCancelable(false);
             pDialog.show();
 
@@ -304,10 +295,12 @@ public class RetrieveIndividualWarehouseSales extends AppCompatActivity implemen
         @Override
         protected Void doInBackground(Void... arg0){
             HttpHandler sh = new HttpHandler();
-                String urlParameters = "user_name="+userNameText+"&user_email="+userEmailText;
+                String urlParameters = "id="+sales_id+"&user_name="+userNameText+"&user_email="+userEmailText+"&user_comment="+userCommentText;
+                System.out.println("sales_id: " + sales_id);
                 System.out.println("userNameText: " + userNameText);
                 System.out.println("userEmailText: " + userEmailText);
-                jsonStrUserCreation = sh.createUser(url,urlParameters);
+                System.out.println("userCommentText: " + userCommentText);
+                jsonStrUserCreation = sh.postComment(url,urlParameters);
 
             Log.e(TAG, "Response from userCreationURL: " + jsonStrUserCreation);
 
