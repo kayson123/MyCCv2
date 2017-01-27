@@ -144,18 +144,21 @@
             map:cameraZoom="10"/>
         </FrameLayout>
 
-    <EditText
-        android:id="@+id/postComment"
+    <!--  Recycler View  -->
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/comment_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/map_framecontainer"
-        android:hint="Write a comment.."/>
+        android:scrollbars="none"
+        android:layout_below="@+id/map_framecontainer"/>
+
+
     <Button
         android:id="@+id/postCommentButton"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/postComment"
-        android:text="Post"
+        android:layout_below="@id/comment_recycler_view"
+        android:text="Write a comment"
         android:background="@color/colorPrimaryDark"
         android:textColor="@color/textColorPrimary"/>
 

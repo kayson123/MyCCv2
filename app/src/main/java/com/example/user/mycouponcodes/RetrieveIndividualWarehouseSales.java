@@ -1,6 +1,7 @@
 package com.example.user.mycouponcodes;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -8,6 +9,8 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -35,9 +38,13 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Comment;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -74,6 +81,7 @@ public class RetrieveIndividualWarehouseSales extends AppCompatActivity implemen
         setContentView(R.layout.item_individual_warehouse);
         //lets set the toolbar
         new RetrieveItem().execute();
+        new RetrieveComments(this).execute();
         myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         fm =(SupportMapFragment)this.getSupportFragmentManager().findFragmentById(R.id.map);
         Button postComment = (Button)findViewById(R.id.postCommentButton);
@@ -324,10 +332,86 @@ public class RetrieveIndividualWarehouseSales extends AppCompatActivity implemen
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
             Toast.makeText(RetrieveIndividualWarehouseSales.this, userMessage, Toast.LENGTH_LONG).show();
+            new RetrieveComments(RetrieveIndividualWarehouseSales.this).execute();
             if(pDialog.isShowing()){
                 pDialog.dismiss();
             }
         }
 
+    }
+
+    class RetrieveComments extends AsyncTask<Void,Void,Void>{
+        private ProgressDialog pDialog;
+        private String url = "http://hermosa.com.my/khlim/read_comments.php";
+        private String TAG = RetrieveIndividualWarehouseSales.RetrieveComments.class.getSimpleName();
+        List<CommentDetails> data = new ArrayList<>();
+        ArrayList<HashMap<String,String>> comment_details;
+        private Context context;
+
+        //for recycler view
+        private RecyclerView comment_recycler;
+        private AdapterRecyclerComments mAdapter;
+
+        public RetrieveComments(Context context){
+            this.context = context;
+            comment_details = new ArrayList<>();
+        }
+
+
+        @Override
+        protected void onPreExecute(){
+            super.onPreExecute();
+            pDialog = new ProgressDialog(RetrieveIndividualWarehouseSales.this);
+            pDialog.setMessage("Updating...");
+            pDialog.setCancelable(false);
+            pDialog.show();
+
+        }
+        @Override
+        protected Void doInBackground(Void... arg0){
+            comment_details = new ArrayList<>();
+            Intent intent = getIntent();
+            String pid = intent.getStringExtra("pid");
+            Log.e(TAG,"pid is: " + pid);
+
+            HttpHandler sh = new HttpHandler();
+            String jsonStr = sh.makeHttpRequest(url,pid);
+            Log.e(TAG, "Response from read_comments.php: " + jsonStr);
+            if(jsonStr != null){
+                try{
+                    JSONObject jsonObj = new JSONObject(jsonStr);
+                    //Getting JSON Array Node
+                    JSONArray comments = jsonObj.getJSONArray("Result");
+                    //looping through all results
+                    for(int i = 0; i<comments.length();i++){
+                        JSONObject s = comments.getJSONObject(i);
+                        CommentDetails cd = new CommentDetails();
+                        cd.userComment = s.getString("userComment");
+                        data.add(cd);
+
+                    }
+                    Log.d("TAG",comment_details.toString());
+                }catch(final JSONException e){
+                    Log.e(TAG, "JSON parsing error: " + e.getMessage());
+                }
+            }else{
+                Log.e(TAG,"Couldn't get json from server");
+            }
+
+            return null;
+        }
+
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            if(pDialog.isShowing()){
+                pDialog.dismiss();
+            }
+            comment_recycler = (RecyclerView)((AppCompatActivity) context).findViewById(R.id.comment_recycler_view);
+            mAdapter = new AdapterRecyclerComments(context, data);
+            final LinearLayoutManager layoutManager = new LinearLayoutManager(context);
+            layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+            comment_recycler.setLayoutManager(layoutManager);
+            comment_recycler.setAdapter(mAdapter);
+        }
     }
 }
