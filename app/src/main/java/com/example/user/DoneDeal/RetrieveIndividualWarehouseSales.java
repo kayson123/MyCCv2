@@ -1,9 +1,10 @@
-package com.example.user.mycouponcodes;
+package com.example.user.DoneDeal;
 
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -38,13 +39,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Comment;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -55,6 +52,8 @@ import java.util.List;
 
 public class RetrieveIndividualWarehouseSales extends AppCompatActivity implements OnMapReadyCallback {
     private GoogleMap googleMap;
+    private SharedPreferences saveUserDetails;
+    //private SharedPreferences.Editor saveUserNameEditor;
     String title_maps;
     String promotion_period;
     String salesLocation;
@@ -69,12 +68,6 @@ public class RetrieveIndividualWarehouseSales extends AppCompatActivity implemen
     String userCommentText;
     String sales_id;
 
-
-    /*public void onCreate(Bundle savedInstanceState){
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.item_individual_warehouse);
-        new RetrieveItem().execute();
-    }*/
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
@@ -106,6 +99,15 @@ public class RetrieveIndividualWarehouseSales extends AppCompatActivity implemen
                 userComment.setTextColor(ContextCompat.getColor(RetrieveIndividualWarehouseSales.this,R.color.textColorPrimary));
                 userComment.setHint("Write a comment...");
                 layout.addView(userComment);
+                //to remember username and email
+                //getSharedPreferences("userDetails",MODE_PRIVATE).edit().putString("userName",userName).putString("userEmail",)
+                saveUserDetails = getSharedPreferences("saveUserDetails",MODE_PRIVATE);
+                userName.setText(saveUserDetails.getString("userName", null));
+                userEmail.setText(saveUserDetails.getString("userEmail", null));
+                if(userName != null && userEmail != null){
+                    userComment.requestFocus();
+                }
+
                 alert.setTitle("Write a comment");
                 alert.setView(layout);
                 alert.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
@@ -114,6 +116,11 @@ public class RetrieveIndividualWarehouseSales extends AppCompatActivity implemen
                         userNameText = userName.getText().toString();
                         userEmailText = userEmail.getText().toString();
                         userCommentText = userComment.getText().toString();
+                        //to save user name and email
+                        saveUserDetails.edit()
+                                    .putString("userName",userNameText).putString("userEmail",userEmailText).commit();
+
+
                         //whatever you want to do with the text
                         if(Patterns.EMAIL_ADDRESS.matcher(userEmail.getText()).matches()){
                             //Toast.makeText(getApplicationContext(), "Valid Email",Toast.LENGTH_LONG).show();
@@ -134,6 +141,12 @@ public class RetrieveIndividualWarehouseSales extends AppCompatActivity implemen
         });
 
     }
+    //Saving Activity State
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
@@ -386,6 +399,7 @@ public class RetrieveIndividualWarehouseSales extends AppCompatActivity implemen
                     for(int i = 0; i<comments.length();i++){
                         JSONObject s = comments.getJSONObject(i);
                         CommentDetails cd = new CommentDetails();
+                        cd.userName = s.getString("userName");
                         cd.userComment = s.getString("userComment");
                         data.add(cd);
 

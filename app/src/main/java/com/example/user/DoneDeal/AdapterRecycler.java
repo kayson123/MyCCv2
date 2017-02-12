@@ -1,9 +1,8 @@
-package com.example.user.mycouponcodes;
+package com.example.user.DoneDeal;
 
 import android.content.Context;
-import android.support.v4.content.ContextCompat;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,12 +11,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.zip.Inflater;
 
 /**
  * Created by User on 1/2/2017.
@@ -35,7 +30,9 @@ public class AdapterRecycler extends RecyclerView.Adapter<RecyclerView.ViewHolde
         this.context = context;
         inflater = LayoutInflater.from(context);
         this.data = data;
+        notifyDataSetChanged();
     }
+
 
     //inflate the layout when viewholder created
     @Override
@@ -54,6 +51,7 @@ public class AdapterRecycler extends RecyclerView.Adapter<RecyclerView.ViewHolde
         myHolder.textName.setText(current.company_name);
         myHolder.textTitle.setText(current.title);
         myHolder.textPeriod.setText(current.promotional_period);
+        myHolder.viewCount.setText("Number of Views: " + current.viewCount);
         //myHolder.textPeriod.setText(ContextCompat.getColor(context,R.color.colorAccent));
 
         //load image into imageview using glide
@@ -69,11 +67,13 @@ public class AdapterRecycler extends RecyclerView.Adapter<RecyclerView.ViewHolde
         return data.size();
     }
 
+
     class MyHolder extends RecyclerView.ViewHolder{
         TextView textName;
         TextView textTitle;
         TextView textPeriod;
         ImageView ivImage;
+        TextView viewCount;
 
         //create constructor to get widget reference
         public MyHolder(View itemView){
@@ -82,6 +82,17 @@ public class AdapterRecycler extends RecyclerView.Adapter<RecyclerView.ViewHolde
             ivImage = (ImageView)itemView.findViewById(R.id.promotion_image);
             textTitle = (TextView)itemView.findViewById(R.id.title);
             textPeriod = (TextView)itemView.findViewById(R.id.promotional_period);
+            viewCount = (TextView)itemView.findViewById(R.id.viewCount);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    WarehouseSalesDetails wsd = data.get(getAdapterPosition());
+                    String pid = wsd.id;
+                    Intent in = new Intent(context,RetrieveIndividualWarehouseSales.class);
+                    in.putExtra("pid",pid);
+                    context.startActivity(in);
+                }
+            });
         }
     }
 }

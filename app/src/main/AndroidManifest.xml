@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.user.mycouponcodes">
+    package="com.example.user.DoneDeal">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="com.example.user.mycouponcodes.MAPS_RECEIVE"/>
@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name="com.example.user.DoneDeal.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme">
             <intent-filter>
@@ -22,7 +22,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:label="@string/app_name" android:name=".RetrieveIndividualWarehouseSales"/>
+        <activity android:label="@string/app_name" android:name="com.example.user.DoneDeal.RetrieveIndividualWarehouseSales"/>
+        <activity android:label="@string/app_name" android:name="com.example.user.DoneDeal.ContactUs"/>
 
         <meta-data
             android:name="com.google.android.gms.version"

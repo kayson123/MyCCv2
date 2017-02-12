@@ -1,4 +1,4 @@
-package com.example.user.mycouponcodes;
+package com.example.user.DoneDeal;
 
 /**
  * Created by User on 1/17/2017.

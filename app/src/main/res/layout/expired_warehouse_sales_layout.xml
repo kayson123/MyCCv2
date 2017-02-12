@@ -4,6 +4,10 @@
     android:background="#d3d3d3"
     android:gravity="center"
     android:orientation="vertical">
+    <com.yalantis.phoenix.PullToRefreshView
+        android:id="@+id/pull_to_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     <!--  Recycler View  -->
     <android.support.v7.widget.RecyclerView
@@ -11,5 +15,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:scrollbars="none" />
+
+        </com.yalantis.phoenix.PullToRefreshView>
 
 </LinearLayout>

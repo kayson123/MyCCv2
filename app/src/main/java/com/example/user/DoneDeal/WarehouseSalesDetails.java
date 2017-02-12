@@ -1,6 +1,4 @@
-package com.example.user.mycouponcodes;
-
-import java.util.Date;
+package com.example.user.DoneDeal;
 
 /**
  * Created by User on 1/2/2017.
@@ -17,5 +15,6 @@ public class WarehouseSalesDetails {
     public String sales_location;
     public Float latitude;
     public Float longitude;
+    public String viewCount;
 
 }

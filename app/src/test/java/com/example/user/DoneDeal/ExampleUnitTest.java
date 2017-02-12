@@ -1,4 +1,4 @@
-package com.example.user.mycouponcodes;
+package com.example.user.DoneDeal;
 
 import org.junit.Test;
 

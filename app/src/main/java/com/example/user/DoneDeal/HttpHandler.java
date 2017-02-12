@@ -1,12 +1,6 @@
-package com.example.user.mycouponcodes;
+package com.example.user.DoneDeal;
 
-import android.net.wifi.WifiConfiguration;
-import android.renderscript.ScriptGroup;
 import android.util.Log;
-import android.util.Pair;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -14,13 +8,10 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.util.List;
 
 /**
  * Created by User on 12/30/2016.

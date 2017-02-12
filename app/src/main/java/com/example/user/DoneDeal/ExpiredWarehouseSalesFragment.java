@@ -1,8 +1,7 @@
-package com.example.user.mycouponcodes;
+package com.example.user.DoneDeal;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,9 +13,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.TextView;
-import android.widget.Toast;
+
+import com.yalantis.phoenix.PullToRefreshView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,41 +28,51 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Created by User on 1/5/2017.
+ * Created by User on 1/6/2017.
  */
 
-public class ActiveWarehouseSalesFragment extends Fragment {
+public class ExpiredWarehouseSalesFragment extends Fragment {
     private View view;
     private String title; //String for tab title
     private static RecyclerView recyclerView;
-    public ActiveWarehouseSalesFragment(){
+    private PullToRefreshView mPullToRefreshView;
+    public ExpiredWarehouseSalesFragment(){
 
     }
 
-    public ActiveWarehouseSalesFragment(String title) {
+    public ExpiredWarehouseSalesFragment(String title) {
         this.title = title;//Setting tab title
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        view = inflater.inflate(R.layout.active_warehouse_sales_layout, container, false);
+        view = inflater.inflate(R.layout.expired_warehouse_sales_layout, container, false);
         new RetrieveWarehouseSalesTask(getActivity()).execute();
+        mPullToRefreshView = (PullToRefreshView)view.findViewById(R.id.pull_to_refresh);
+        mPullToRefreshView.setOnRefreshListener(new PullToRefreshView.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mPullToRefreshView.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        new RetrieveWarehouseSalesTask(getActivity()).execute();
+                    }
+                }, 10);
+            }
+        });
 
         return view;
     }
 
+
     class RetrieveWarehouseSalesTask extends AsyncTask<Void,Void,Void> {
         private String TAG = RetrieveWarehouseSalesTask.class.getSimpleName();
-        private String TAG_PID = "pid";
         public ProgressDialog pDialog;
         private Context context;
         //URL to get JSON details
         private String url = "http://www.hermosa.com.my/khlim/retrieve_ws.php";
         ArrayList<HashMap<String,String>> sales_details;
-        JSONObject jsonObj;
-        String jsonStr;
-        JSONArray sales;
 
         //for recycler view
         private RecyclerView warehouse_recycler;
@@ -92,39 +100,31 @@ public class ActiveWarehouseSalesFragment extends Fragment {
         protected Void doInBackground(Void... arg0){
             HttpHandler sh = new HttpHandler();
             //making a request to URL and getting response
-            jsonStr = sh.makeServiceCall(url);
+            String jsonStr = sh.makeServiceCall(url);
             Log.e(TAG, "Response from url: " + jsonStr);
 
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result){
-            super.onPostExecute(result);
-            if(pDialog.isShowing()){
-                pDialog.dismiss();
-            }
             if(jsonStr != null){
                 try{
-                    jsonObj = new JSONObject(jsonStr);
+                    JSONObject jsonObj = new JSONObject(jsonStr);
                     //Getting JSON Array Node
-                    sales = jsonObj.getJSONArray("Result");
+                    JSONArray sales = jsonObj.getJSONArray("Result");
                     //looping through all results
-                    for(int i = 0; i<sales.length();i++){
+                    for(int i = sales.length() - 1; i >= 0;i--){
                         JSONObject s = sales.getJSONObject(i);
                         WarehouseSalesDetails wsd = new WarehouseSalesDetails();
                         wsd.expiry_date = s.getString("expiry_date");
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                         Date actual_date = sdf.parse(wsd.expiry_date);
-                        if(new Date().before(actual_date)){
+                        if(new Date().after(actual_date)){
                             wsd.id = s.getString("id");
                             wsd.company_name = s.getString("company_name");
                             wsd.promotion_image= s.getString("promotion_image");
                             wsd.title = s.getString("title");
                             wsd.promotional_period = s.getString("promotional_period");
+                            wsd.viewCount = s.getString("view_count");
                             data.add(wsd);
                         }
+
                     }
                     Log.d("TAG",sales_details.toString());
                 }catch(final JSONException e){
@@ -135,33 +135,28 @@ public class ActiveWarehouseSalesFragment extends Fragment {
             }else{
                 Log.e(TAG,"Couldn't get json from server");
             }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result){
+            super.onPostExecute(result);
+            if(pDialog.isShowing()){
+                pDialog.dismiss();
+            }
+
+
+
             //update RecyclerView
-            warehouse_recycler = (RecyclerView)((AppCompatActivity) context).findViewById(R.id.recyclerView);
+            warehouse_recycler = (RecyclerView)((AppCompatActivity) context).findViewById(R.id.recyclerViewWarehouseExpired);
             mAdapter = new AdapterRecycler(context, data);
             final LinearLayoutManager layoutManager = new LinearLayoutManager(context);
             layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
             warehouse_recycler.setLayoutManager(layoutManager);
             warehouse_recycler.setAdapter(mAdapter);
-            warehouse_recycler.addOnItemTouchListener(
-                    new RecyclerItemClickListener(context,warehouse_recycler,new RecyclerItemClickListener.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(View view, int position) {
-                            WarehouseSalesDetails wsd = data.get(position);
-                           // Toast.makeText(context,"ID is " + wsd.id,
-                                    //Toast.LENGTH_SHORT).show();
-                            String pid = wsd.id;
-                            Intent in = new Intent(context,RetrieveIndividualWarehouseSales.class);
-                            in.putExtra("pid",pid);
-                            startActivity(in);
-                        }
-                        @Override
-                        public void onLongItemClick(View view, int position){
-                            //do whatever
-                        }
-                    }));
+            warehouse_recycler.invalidate();
+            mPullToRefreshView.setRefreshing(false);
         }
     }
-
-
 
 }

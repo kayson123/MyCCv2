@@ -38,4 +38,6 @@ dependencies {
     // for bottom sheet
     compile 'com.flipboard:bottomsheet-core:1.5.3'
     compile 'com.flipboard:bottomsheet-commons:1.5.3'
+    //for pull to refresh
+    compile 'com.yalantis:phoenix:1.2.3'
 }

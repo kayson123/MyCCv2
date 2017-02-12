@@ -1,14 +1,11 @@
-package com.example.user.mycouponcodes;
+package com.example.user.DoneDeal;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.bumptech.glide.Glide;
 
 import java.util.Collections;
 import java.util.List;
@@ -46,6 +43,7 @@ public class AdapterRecyclerComments extends RecyclerView.Adapter<RecyclerView.V
         MyHolder myHolder = (MyHolder) holder;
         CommentDetails current = data.get(position);
         myHolder.textName.setText(current.userComment);
+        myHolder.userName.setText(current.userName);
     }
 
     @Override
@@ -56,11 +54,13 @@ public class AdapterRecyclerComments extends RecyclerView.Adapter<RecyclerView.V
 
     class MyHolder extends RecyclerView.ViewHolder{
         TextView textName;
+        TextView userName;
 
         //create constructor to get widget reference
         public MyHolder(View itemView){
             super(itemView);
             textName = (TextView)itemView.findViewById(R.id.comments);
+            userName = (TextView)itemView.findViewById(R.id.userName);
         }
     }
 }
