@@ -144,13 +144,22 @@
             map:cameraZoom="10"/>
         </FrameLayout>
 
+    <Button
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:id="@+id/getDirectionsButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/map_framecontainer"
+        android:text="Get Direction"
+        android:textColor="@color/windowBackground"/>
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="Comments"
         android:id="@+id/commentText"
-        android:layout_below="@id/map_framecontainer"
+        android:layout_below="@id/getDirectionsButton"
         android:textStyle="bold"
         android:textSize="15sp"
         android:textColor="#000000"

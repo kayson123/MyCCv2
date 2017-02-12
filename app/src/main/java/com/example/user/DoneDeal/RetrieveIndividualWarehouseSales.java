@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -63,6 +64,7 @@ public class RetrieveIndividualWarehouseSales extends AppCompatActivity implemen
     private ShareActionProvider mShareActionProvider;
     protected BottomSheetLayout bottomSheetLayout;
     Toolbar myToolbar;
+    Button getDirections;
     String userNameText;
     String userEmailText;
     String userCommentText;
@@ -76,6 +78,8 @@ public class RetrieveIndividualWarehouseSales extends AppCompatActivity implemen
         new RetrieveItem().execute();
         new RetrieveComments(this).execute();
         myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        //to set the button for getting directions
+        getDirections = (Button)findViewById(R.id.getDirectionsButton);
         fm =(SupportMapFragment)this.getSupportFragmentManager().findFragmentById(R.id.map);
         Button postComment = (Button)findViewById(R.id.postCommentButton);
         postComment.setOnClickListener(new View.OnClickListener(){
@@ -99,8 +103,6 @@ public class RetrieveIndividualWarehouseSales extends AppCompatActivity implemen
                 userComment.setTextColor(ContextCompat.getColor(RetrieveIndividualWarehouseSales.this,R.color.textColorPrimary));
                 userComment.setHint("Write a comment...");
                 layout.addView(userComment);
-                //to remember username and email
-                //getSharedPreferences("userDetails",MODE_PRIVATE).edit().putString("userName",userName).putString("userEmail",)
                 saveUserDetails = getSharedPreferences("saveUserDetails",MODE_PRIVATE);
                 userName.setText(saveUserDetails.getString("userName", null));
                 userEmail.setText(saveUserDetails.getString("userEmail", null));
@@ -139,6 +141,19 @@ public class RetrieveIndividualWarehouseSales extends AppCompatActivity implemen
                 alert.show();
             }
         });
+
+        //Open google maps when get directions button is clicked
+        getDirections.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String uri = "http://maps.google.com/maps?q=loc:"+latitude+","+longitude;
+                Intent navigation = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
+                navigation.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+                startActivity(navigation);
+            }
+        });
+
+
 
     }
     //Saving Activity State
@@ -184,6 +199,8 @@ public class RetrieveIndividualWarehouseSales extends AppCompatActivity implemen
         googleMap = gm;
         if(latitude == null || longitude == null){
             getSupportFragmentManager().beginTransaction().hide(fm).commit();
+            //hide the get direction button when map is null
+            getDirections.setVisibility(View.GONE);
         }else{
             LatLng location = new LatLng(latitude, longitude);
             googleMap.addMarker(new MarkerOptions().position(location).title(title_maps)).showInfoWindow();
