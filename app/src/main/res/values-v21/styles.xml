@@ -19,6 +19,16 @@
         <item name="android:windowAllowReturnTransitionOverlap">true</item>
         <item name="android:windowSharedElementEnterTransition">@android:transition/move</item>
         <item name="android:windowSharedElementExitTransition">@android:transition/move</item>
+        <item name="autoCompleteTextViewStyle">@style/myAutoCompleteTextViewStyle</item>
+        <item name="textAppearanceSearchResultTitle">@style/mySearchResult</item>
 
+    </style>
+
+    <style name="myAutoCompleteTextViewStyle" parent="Widget.AppCompat.Light.AutoCompleteTextView">
+        <item name="android:popupBackground">#EEE</item>
+        <item name="android:colorFocusedHighlight">#000000</item>
+    </style>
+    <style name="mySearchResult" parent="TextAppearance.AppCompat.SearchResult.Title">
+        <item name="android:textColor">#FFF</item>
     </style>
 </resources>

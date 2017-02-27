@@ -1,4 +1,4 @@
-package com.example.user.DoneDeal;
+package com.homike.user.HoBook;
 
 /**
  * Created by User on 1/2/2017.
@@ -16,5 +16,6 @@ public class WarehouseSalesDetails {
     public Float latitude;
     public Float longitude;
     public String viewCount;
+    public String warehouse_url;
 
 }

@@ -1,4 +1,4 @@
-package com.example.user.DoneDeal;
+package com.homike.user.HoBook;
 
 import org.junit.Test;
 

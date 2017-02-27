@@ -1,4 +1,4 @@
-package com.example.user.DoneDeal;
+package com.homike.user.HoBook;
 
 import android.content.Context;
 import android.content.Intent;
@@ -56,8 +56,8 @@ public class AdapterRecycler extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         //load image into imageview using glide
         Glide.with(context).load(current.promotion_image)
-                .placeholder(R.drawable.error)
-                .error(R.drawable.error)
+                .placeholder(R.drawable.launcher_logo)
+                .error(R.drawable.launcher_logo)
                 .into(myHolder.ivImage);
     }
 

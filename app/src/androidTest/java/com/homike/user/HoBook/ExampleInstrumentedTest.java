@@ -1,4 +1,4 @@
-package com.example.user.DoneDeal;
+package com.homike.user.HoBook;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

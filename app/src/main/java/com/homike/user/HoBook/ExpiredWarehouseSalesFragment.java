@@ -1,4 +1,4 @@
-package com.example.user.DoneDeal;
+package com.homike.user.HoBook;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -71,7 +71,7 @@ public class ExpiredWarehouseSalesFragment extends Fragment {
         public ProgressDialog pDialog;
         private Context context;
         //URL to get JSON details
-        private String url = "http://www.hermosa.com.my/khlim/retrieve_ws.php";
+        private String url = "http://www.hermosa.com.my/khlim/retrieve_ws_production.php";
         ArrayList<HashMap<String,String>> sales_details;
 
         //for recycler view

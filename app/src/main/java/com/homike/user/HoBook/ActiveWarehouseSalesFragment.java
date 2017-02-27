@@ -1,4 +1,4 @@
-package com.example.user.DoneDeal;
+package com.homike.user.HoBook;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -6,9 +6,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.CursorAdapter;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +39,10 @@ public class ActiveWarehouseSalesFragment extends Fragment {
     private String title; //String for tab title
     private RecyclerView recyclerView;
     private PullToRefreshView mPullToRefreshView;
+
+
+
+
     public ActiveWarehouseSalesFragment(){
 
     }
@@ -49,7 +56,6 @@ public class ActiveWarehouseSalesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         view = inflater.inflate(R.layout.active_warehouse_sales_layout, container, false);
         new RetrieveWarehouseSalesTask(getActivity()).execute();
-
         mPullToRefreshView = (PullToRefreshView)view.findViewById(R.id.pull_to_refresh);
         mPullToRefreshView.setOnRefreshListener(new PullToRefreshView.OnRefreshListener() {
             @Override
@@ -72,7 +78,7 @@ public class ActiveWarehouseSalesFragment extends Fragment {
         public ProgressDialog pDialog;
         private Context context;
         //URL to get JSON details
-        private String url = "http://www.hermosa.com.my/khlim/retrieve_ws.php";
+        private String url = "http://www.hermosa.com.my/khlim/retrieve_ws_production.php";
         ArrayList<HashMap<String,String>> sales_details;
         JSONObject jsonObj;
         String jsonStr;

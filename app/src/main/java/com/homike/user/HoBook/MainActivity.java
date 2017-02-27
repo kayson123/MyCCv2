@@ -1,13 +1,17 @@
-package com.example.user.DoneDeal;
+package com.homike.user.HoBook;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.CursorAdapter;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -25,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private static ViewPager viewPager;
     private static TabLayout tabLayout;
     Spinner dropdown;
-
+    private FloatingActionButton floatSearch;
 
 
     @Override
@@ -37,6 +41,15 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         //Add a dropdown menu to toolbar
         dropdown = (Spinner)findViewById(R.id.spinner_nav);
+        //search float
+        floatSearch = (FloatingActionButton)findViewById(R.id.float_search);
+        floatSearch.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                Intent intent = new Intent(MainActivity.this,SearchActivity.class);
+                startActivity(intent);
+            }
+        });
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,R.array.Menu,R.layout.spinner_item);
         adapter.setDropDownViewResource(R.layout.spinner_dropdown);
         dropdown.setAdapter(adapter);
@@ -106,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
         adapter.addFrag(new ExpiredWarehouseSalesFragment("Expired"),"Expired");
         viewPager.setAdapter(adapter);
     }
+
 
         //View Pager fragments setting adapter class
     class ViewPagerAdapter extends FragmentPagerAdapter {

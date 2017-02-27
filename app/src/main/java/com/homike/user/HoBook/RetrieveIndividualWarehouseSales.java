@@ -1,4 +1,4 @@
-package com.example.user.DoneDeal;
+package com.homike.user.HoBook;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -13,7 +13,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.Patterns;
@@ -58,10 +57,10 @@ public class RetrieveIndividualWarehouseSales extends AppCompatActivity implemen
     String title_maps;
     String promotion_period;
     String salesLocation;
+    String shareUrl;
     Float latitude;
     Float longitude;
     SupportMapFragment fm;
-    private ShareActionProvider mShareActionProvider;
     protected BottomSheetLayout bottomSheetLayout;
     Toolbar myToolbar;
     Button getDirections;
@@ -147,6 +146,7 @@ public class RetrieveIndividualWarehouseSales extends AppCompatActivity implemen
             @Override
             public void onClick(View v) {
                 String uri = "http://maps.google.com/maps?q=loc:"+latitude+","+longitude;
+                System.out.println("URI: " + uri);
                 Intent navigation = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
                 navigation.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
                 startActivity(navigation);
@@ -177,8 +177,7 @@ public class RetrieveIndividualWarehouseSales extends AppCompatActivity implemen
                 bottomSheetLayout = (BottomSheetLayout) findViewById(R.id.bottomsheet);
                 final Intent shareIntent = new Intent(Intent.ACTION_SEND);
                 shareIntent.setType("text/plain");
-                String shareBody = title_maps + " from " + promotion_period + " @" + salesLocation
-                                + ". Download now at Google Play Store to stay up to date with the latest sales!";
+                String shareBody = "Yo! Check out this warehouse sale " + title_maps + " " + shareUrl;
                 shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Share Subject");
                 shareIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
                 IntentPickerSheetView intentPickerSheet = new IntentPickerSheetView(RetrieveIndividualWarehouseSales.this,shareIntent,"Share via",  new IntentPickerSheetView.OnIntentPickedListener(){
@@ -214,7 +213,7 @@ public class RetrieveIndividualWarehouseSales extends AppCompatActivity implemen
 
     class RetrieveItem extends AsyncTask<Void,Void,Void>{
         private ProgressDialog pDialog;
-        private String url = "http://hermosa.com.my/khlim/retrieve_individual_warehouse_sales.php";
+        private String url = "http://hermosa.com.my/khlim/retrieve_individual_warehouse_sales_production.php";
         private String TAG = RetrieveIndividualWarehouseSales.RetrieveItem.class.getSimpleName();
         List<WarehouseSalesDetails> data = new ArrayList<>();
         ArrayList<HashMap<String,String>> sales_details;
@@ -238,7 +237,7 @@ public class RetrieveIndividualWarehouseSales extends AppCompatActivity implemen
 
             HttpHandler sh = new HttpHandler();
             String jsonStr = sh.makeHttpRequest(url,pid);
-            Log.e(TAG, "Response from url: " + jsonStr);
+            Log.e(TAG, "Response from url RetrieveIndividualWarehouseSales: " + jsonStr);
             if(jsonStr != null){
                 try{
                     JSONObject jsonObj = new JSONObject(jsonStr);
@@ -255,6 +254,7 @@ public class RetrieveIndividualWarehouseSales extends AppCompatActivity implemen
                         wsd.promotional_period = s.getString("promotional_period");
                         wsd.sales_description = s.getString("sales_description");
                         wsd.sales_location = s.getString("sales_location");
+                        wsd.warehouse_url = s.getString("url_page");
                         if(s.getDouble("latitude") == 0 || s.getDouble("longitude") == 0){
                             wsd.latitude = null;
                             wsd.longitude = null;
@@ -299,8 +299,8 @@ public class RetrieveIndividualWarehouseSales extends AppCompatActivity implemen
             sales_location.setText(wsd.sales_location);
             //load image into imageview using glide
             Glide.with(RetrieveIndividualWarehouseSales.this).load(imageURL)
-                    .placeholder(R.drawable.error)
-                    .error(R.drawable.error)
+                    .placeholder(R.drawable.launcher_logo)
+                    .error(R.drawable.launcher_logo)
                     .into(promotional_image);
             //google maps
             latitude = wsd.latitude;
@@ -310,12 +310,14 @@ public class RetrieveIndividualWarehouseSales extends AppCompatActivity implemen
             salesLocation = wsd.sales_location;
             fm.getMapAsync(RetrieveIndividualWarehouseSales.this);
             setSupportActionBar(myToolbar);
+            //for sharing URL
+            shareUrl = wsd.warehouse_url;
         }
     }
     //to create user
     class PostComments extends AsyncTask<Void,Void,Void>{
         private ProgressDialog pDialog;
-        private String url = "http://hermosa.com.my/khlim/post_comment.php";
+        private String url = "http://hermosa.com.my/khlim/post_comment_production.php";
         private String TAG = RetrieveIndividualWarehouseSales.RetrieveItem.class.getSimpleName();
         String jsonStrUserCreation;
         String userMessage = "empty";
@@ -372,7 +374,7 @@ public class RetrieveIndividualWarehouseSales extends AppCompatActivity implemen
 
     class RetrieveComments extends AsyncTask<Void,Void,Void>{
         private ProgressDialog pDialog;
-        private String url = "http://hermosa.com.my/khlim/read_comments.php";
+        private String url = "http://hermosa.com.my/khlim/read_comments_production.php";
         private String TAG = RetrieveIndividualWarehouseSales.RetrieveComments.class.getSimpleName();
         List<CommentDetails> data = new ArrayList<>();
         ArrayList<HashMap<String,String>> comment_details;

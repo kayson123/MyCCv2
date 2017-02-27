@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.user.DoneDeal">
+    package="com.homike.user.HoBook">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="com.example.user.mycouponcodes.MAPS_RECEIVE"/>
@@ -13,17 +13,19 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.example.user.DoneDeal.MainActivity"
+            android:name="com.homike.user.HoBook.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.SEARCH" />
+                <action android:name="android.intent.action.VIEW" />
             </intent-filter>
         </activity>
-        <activity android:label="@string/app_name" android:name="com.example.user.DoneDeal.RetrieveIndividualWarehouseSales"/>
-        <activity android:label="@string/app_name" android:name="com.example.user.DoneDeal.ContactUs"/>
+        <activity android:label="@string/app_name" android:name="com.homike.user.HoBook.RetrieveIndividualWarehouseSales"/>
+        <activity android:label="@string/app_name" android:name="com.homike.user.HoBook.ContactUs"/>
+        <activity android:label="@string/app_name" android:name="com.homike.user.HoBook.SearchActivity"/>
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -32,6 +34,10 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCY7FH4RcpCXLdnl6zn-tahJesblKb8pmY"/>
+
+        <meta-data
+            android:name="android.app.searchable"
+            android:resource="@xml/searchable" />
     </application>
 
 </manifest>

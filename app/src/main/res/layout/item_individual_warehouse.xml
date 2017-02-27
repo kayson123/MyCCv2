@@ -61,7 +61,7 @@
         android:padding="10dp"
         android:background="@drawable/rounded_corner"
         android:layout_marginTop="-10dp"/>
-    <com.example.user.DoneDeal.ExpandableTextView
+    <com.homike.user.HoBook.ExpandableTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
@@ -140,7 +140,7 @@
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            tools:context="com.example.user.DoneDeal.RetrieveIndividualWarehouseSales"
+            tools:context="com.homike.user.HoBook.RetrieveIndividualWarehouseSales"
             map:cameraZoom="10"/>
         </FrameLayout>
 
@@ -150,7 +150,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/map_framecontainer"
-        android:text="Get Direction"
+        android:text="Get Directions"
         android:textColor="@color/windowBackground"/>
 
     <TextView

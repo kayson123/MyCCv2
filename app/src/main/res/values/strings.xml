@@ -1,9 +1,9 @@
 <resources>
-    <string name="app_name">DoneDeal</string>
+    <string name="app_name">HoBook</string>
     <string name="action_settings">Settings</string>
     <string name="valid_from">Valid</string>
     <string-array name="Menu">
-        <item>Home</item>
+        <item>Warehouse Sales</item>
         <item>Contact Us</item>
     </string-array>
 </resources>
