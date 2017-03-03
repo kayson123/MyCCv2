@@ -83,6 +83,8 @@ public class ActiveWarehouseSalesFragment extends Fragment {
         JSONObject jsonObj;
         String jsonStr;
         JSONArray sales;
+        String filteredLocation = MainActivity.selectedLocation;
+
 
         //for recycler view
         private RecyclerView warehouse_recycler;
@@ -104,6 +106,7 @@ public class ActiveWarehouseSalesFragment extends Fragment {
             pDialog.setMessage("Getting you the best warehouse sales...");
             pDialog.setCancelable(false);
             pDialog.show();
+            System.out.println("FilteredLocation is: " + filteredLocation);
         }
 
         @Override
@@ -135,10 +138,20 @@ public class ActiveWarehouseSalesFragment extends Fragment {
                         wsd.expiry_date = s.getString("expiry_date");
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                         Date actual_date = sdf.parse(wsd.expiry_date);
-                        if(new Date().before(actual_date)){
+                        if(filteredLocation == null || filteredLocation.equals("All") ) {
+                            if (new Date().before(actual_date)) {
+                                wsd.id = s.getString("id");
+                                wsd.company_name = s.getString("company_name");
+                                wsd.promotion_image = s.getString("promotion_image");
+                                wsd.title = s.getString("title");
+                                wsd.promotional_period = s.getString("promotional_period");
+                                wsd.viewCount = s.getString("view_count");
+                                data.add(wsd);
+                            }
+                        }else if(filteredLocation.equals(s.getString("state")) && new Date().before(actual_date)){
                             wsd.id = s.getString("id");
                             wsd.company_name = s.getString("company_name");
-                            wsd.promotion_image= s.getString("promotion_image");
+                            wsd.promotion_image = s.getString("promotion_image");
                             wsd.title = s.getString("title");
                             wsd.promotional_period = s.getString("promotional_period");
                             wsd.viewCount = s.getString("view_count");

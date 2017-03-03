@@ -17,5 +17,6 @@ public class WarehouseSalesDetails {
     public Float longitude;
     public String viewCount;
     public String warehouse_url;
+    public String sales_state;
 
 }

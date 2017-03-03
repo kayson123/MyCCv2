@@ -6,11 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.MatrixCursor;
-import android.graphics.Matrix;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.BaseColumns;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -18,8 +16,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v4.widget.CursorAdapter;
-import android.view.View;
-import android.widget.EditText;
 import android.support.v7.widget.SearchView;
 import android.support.v4.widget.SimpleCursorAdapter;
 
@@ -27,7 +23,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +39,8 @@ public class SearchActivity extends AppCompatActivity {
     SearchView searchView = null;
     private WarehouseSalesDetails[] strArrData;
     HashMap<String, String> idMap = new HashMap<String, String>();
+    String selectedTitle1;
+    String selectedID;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -61,12 +58,13 @@ public class SearchActivity extends AppCompatActivity {
         new RetrieveWarehouseSalesTask(this).execute();
 
 
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
 
-        getMenuInflater().inflate(R.menu.menu_search,menu);
+        getMenuInflater().inflate(R.menu.menu_filter,menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchManager searchManager = (SearchManager)SearchActivity.this.getSystemService(Context.SEARCH_SERVICE);
         if(searchItem!=null){
@@ -88,16 +86,21 @@ public class SearchActivity extends AppCompatActivity {
                         System.out.println("idMap: " + entry.getKey() + ", " + entry.getValue());
 
                     }
+
                     if(cursor.moveToPosition(position)){
                         String selectedTitle = cursor.getString(cursor.getColumnIndex("title"));
                         searchView.setQuery(cursor.getString(cursor.getColumnIndex("title")),false);
                         System.out.println("Get key from value: " + getKeyFromValue(idMap,selectedTitle));
-                        String selectedID = getKeyFromValue(idMap,selectedTitle).toString();
+                        selectedID = getKeyFromValue(idMap,selectedTitle).toString();
                         Log.d("selected id",selectedID);
+                        searchView.setQuery("", false);
+                        searchView.clearFocus();
                         Intent intent = new Intent(SearchActivity.this,RetrieveIndividualWarehouseSales.class);
                         intent.putExtra("pid",selectedID);
                         startActivity(intent);
+
                     }
+                    searchView.clearFocus();
 
                     return true;
 
@@ -240,6 +243,16 @@ public class SearchActivity extends AppCompatActivity {
                 }
             }else{
                 Log.e(TAG,"Couldn't get json from server");
+            }
+            Intent intent1 = getIntent();
+            selectedTitle1 = intent1.getStringExtra("selectedTitle");
+            System.out.println("selectedTitle1: " + selectedTitle1);
+            if(selectedTitle1 != null){
+                selectedID = getKeyFromValue(idMap,selectedTitle1).toString();
+                Log.d("selected id",selectedID);
+                Intent intent = new Intent(SearchActivity.this,RetrieveIndividualWarehouseSales.class);
+                intent.putExtra("pid",selectedID);
+                startActivity(intent);
             }
         }
 

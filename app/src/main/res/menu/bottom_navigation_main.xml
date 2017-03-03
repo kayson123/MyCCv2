@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/warehouse_sales"
+        android:enabled="true"
+        android:icon="@drawable/ic_shopping_basket_black_24dp"
+        android:title="Warehouse Sales"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/contact_us"
+        android:enabled="true"
+        android:icon="@drawable/ic_contact_mail_black_24dp"
+        android:title="Contact Us"
+        app:showAsAction="ifRoom" />
+
+</menu>
