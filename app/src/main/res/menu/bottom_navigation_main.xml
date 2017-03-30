@@ -7,11 +7,21 @@
         android:icon="@drawable/ic_shopping_basket_black_24dp"
         android:title="Warehouse Sales"
         app:showAsAction="ifRoom" />
+
+    <!--<item
+        android:id="@+id/food_delivery"
+        android:enabled="true"
+        android:icon="@drawable/delivery_bike"
+        android:title="Food Delivery"
+        app:showAsAction="ifRoom" /> -->
+
     <item
         android:id="@+id/contact_us"
         android:enabled="true"
         android:icon="@drawable/ic_contact_mail_black_24dp"
         android:title="Contact Us"
         app:showAsAction="ifRoom" />
+
+
 
 </menu>

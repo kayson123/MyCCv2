@@ -3,11 +3,14 @@ package com.homike.user.HoBook;
 import android.app.Dialog;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -19,16 +22,21 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
@@ -36,6 +44,10 @@ import android.widget.Toast;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.homike.user.HoBook.app.Config;
 import com.homike.user.HoBook.util.NotificationUtils;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
     private static TabLayout tabLayout;
     private FloatingActionButton floatSearch;
     public static String selectedLocation;
+    public Button subscribeButton;
+    public String userEmailText;
 
     //for firebase
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -256,8 +270,99 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //to subscribe
+        subscribeButton = (Button)findViewById(R.id.subscribe_button);
+        subscribeButton.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View view){
+                AlertDialog.Builder alertSubscribe = new AlertDialog.Builder(MainActivity.this,R.style.AlertDialogTheme);
+                LinearLayout layout = new LinearLayout(MainActivity.this);
+                layout.setOrientation(LinearLayout.VERTICAL);
+                final EditText inputEmail = new EditText(MainActivity.this);
+                inputEmail.setHint("Email Address");
+                inputEmail.setTextColor(ContextCompat.getColor(MainActivity.this,R.color.textColorPrimary));
+                inputEmail.setSingleLine(true);
+                inputEmail.setCompoundDrawablesWithIntrinsicBounds(R.drawable.account_settings_colour, 0, 0, 0);
+                layout.addView(inputEmail);
+                alertSubscribe.setTitle("Subscribe to HoBook Newsletter");
+                alertSubscribe.setView(layout);
+                alertSubscribe.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        userEmailText = inputEmail.getText().toString();
+                        //whatever you want to do with the text
+                        if(Patterns.EMAIL_ADDRESS.matcher(inputEmail.getText()).matches()){
+                            //Toast.makeText(getApplicationContext(), "Valid Email",Toast.LENGTH_LONG).show();
+                            new MainActivity.SubscribeTask().execute();
+                        }else{
+                            Toast.makeText(getApplicationContext(),"Invalid Email",Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+                alertSubscribe.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //whatever you want to do with the no button
+                    }
+                });
+                alertSubscribe.show();
+            }
+        });
 
 
+
+    }
+
+    //for subscription
+    class SubscribeTask extends AsyncTask<Void,Void,Void>{
+        private ProgressDialog pDialog;
+        private String url = "http://hermosa.com.my/khlim/users_subscribe_production.php";
+        private String TAG = RetrieveIndividualWarehouseSales.RetrieveItem.class.getSimpleName();
+        String jsonStrUserCreation;
+        String userMessage = "empty";
+
+        @Override
+        protected void onPreExecute(){
+            super.onPreExecute();
+            pDialog = new ProgressDialog(MainActivity.this);
+            pDialog.setMessage("Subscribing...");
+            pDialog.setCancelable(false);
+            pDialog.show();
+
+        }
+
+        @Override
+        protected Void doInBackground(Void... arg0){
+            HttpHandler sh = new HttpHandler();
+            String urlParameters = "email_address="+userEmailText;
+            System.out.println("userEmailText: " + userEmailText);
+            jsonStrUserCreation = sh.postComment(url,urlParameters);
+
+            Log.e(TAG, "Response from userCreationURL: " + jsonStrUserCreation);
+
+            try{
+                JSONObject jsonObj = new JSONObject(jsonStrUserCreation);
+                JSONArray userDetails = jsonObj.getJSONArray("Result");
+                for(int i = 0; i<userDetails.length();i++){
+                    JSONObject s = userDetails.getJSONObject(i);
+                    UserDetails ud = new UserDetails();
+                    ud.successID = s.getString("success");
+                    ud.successMessage = s.getString("message");
+                    userMessage = ud.successMessage;
+                    //Toast.makeText(RetrieveIndividualWarehouseSales.this, ud.successMessage, Toast.LENGTH_LONG).show();
+
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            Toast.makeText(MainActivity.this, userMessage, Toast.LENGTH_LONG).show();
+            if(pDialog.isShowing()){
+                pDialog.dismiss();
+            }
+        }
     }
 
     //for firebase
